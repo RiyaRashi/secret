@@ -1,10 +1,13 @@
 //jshint esversion:6
+require('dotenv').config();//npm i dotenv used for environmnet variables to keep secrets safe
 const express=require("express");
 const bodyParser=require("body-parser");
 const ejs=require("ejs");
 const mongoose=require("mongoose");
 const encrypt=require("mongoose-encryption");
 const app=express();
+
+console.log(process.env.API_KEY);
 app.use(express.static("public"));
 app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({
@@ -15,10 +18,11 @@ const userSchema= new mongoose.Schema({
   email:String,
   password:String
 });
-const secret="thisisalifeissue";
-userSchema.plugin(encrypt,{secret:secret,encryptedFields:["password"]});
+//const secret="thisisalifeissue";
+userSchema.plugin(encrypt,{secret:process.env.SECRET,encryptedFields:["password"]});
 const User =new mongoose.model("User",userSchema);
 app.get("/",function(req,res){
+
   res.render("home");
 });
 app.get("/login",function(req,res){
@@ -64,3 +68,5 @@ else{
 app.listen(3000,function(res,req){
    console.log("server running ");
 });
+////node modules are not commited because it is a massive file so no commits on github
+//// .env also not commited  sp that our apis are not shown to everyone (encryption ke liye)
